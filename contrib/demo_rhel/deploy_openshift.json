@@ -6,7 +6,7 @@
       "count":1,
       "image":"openshift/origin-server-docker",
       "publicports":[
-        {"internal":443,"external":6060}
+        {"internal":9292,"external":6060}
       ],
       "links":[
         {"to":"db"}
