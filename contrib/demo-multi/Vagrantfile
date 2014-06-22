@@ -21,12 +21,29 @@ if [ $ret -ne 0 ]; then
   docker pull $gateway:5000/openshift/parks-map-app
   docker tag $gateway:5000/openshift/parks-map-app openshift/parks-map-app
   docker tag openshift/parks-map-app parks-map-app
+
+  docker pull $gateway:5000/openshift/rhel-mongodb
+  docker tag $gateway:5000/openshift/rhel-mongodb openshift/rhel-mongodb 
+
+  docker pull $gateway:5000/openshift/rhel-mongodb-repl
+  docker tag $gateway:5000/openshift/rhel-mongodb-repl openshift/rhel-mongodb-repl
+
+  docker pull $gateway:5000/openshift/origin-server-docker
+  docker tag $gateway:5000/openshift/origin-server-docker openshift/origin-server-docker
+
+  docker pull $gateway:5000/pmorie/sti-html-app
+  docker tag $gateway:5000/pmorie/sti-html-app pmorie/sti-html-app
+
+  # docker pull $gateway:5000/jboss/eap
+  # docker tag $gateway:5000/jboss/eap jboss/eap
 fi
 
 if [ ! -d "geard" ]; then
   echo "Fetching geard code"
-  git clone git://github.com/jwforres/geard
-  git checkout mongodbworld_demo
+  git clone git@github.com:jwforres/geard.git
+  pushd geard
+    git checkout mongodbworld_demo
+  popd
 fi
 
 if [ ! "$(ifconfig | grep eth1)" ]; then
@@ -82,8 +99,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provider :libvirt do |libvirt, override|
-    libvirt.cpus = 4
-    libvirt.memory = 4096
+    libvirt.cpus = 2
+    libvirt.memory = 2048
     libvirt.driver = 'kvm' # needed for kvm performance benefits!
     libvirt.connect_via_ssh = false
     libvirt.username = 'root'
@@ -97,6 +114,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.network "forwarded_port", guest: 15000, host: 15000
     config.vm.network "forwarded_port", guest: 1001, host: 11001
     config.vm.network "private_network", ip: "192.168.205.10", libvirt__network_name: "demo"
+    config.vm.network "forwarded_port", guest: 4001, host: 4001
+    config.vm.network "forwarded_port", guest: 4002, host: 4002
+    config.vm.network "forwarded_port", guest: 4003, host: 4003
+    config.vm.network "forwarded_port", guest: 4004, host: 4004
   end
 
   config.vm.define "atomic-2" do |config|
